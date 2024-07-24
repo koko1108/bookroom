@@ -10,9 +10,11 @@ import "react-date-range/dist/theme/default.css"; // theme css file
 import { DateRange } from "react-date-range";
 import { zhTW } from "date-fns/locale"; // 直接從 date-fns 引入
 import format from "date-fns/format"; // 日期格式
+import { useNavigate } from 'react-router-dom';
 import "./header.scss";
 
 const Header = () => {
+  const navigate=useNavigate();
   const [openConditions, setOpenConditions] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
   const [destination, setDestination] = useState("");
@@ -38,6 +40,10 @@ const Header = () => {
       [name]: sign === "increase" ? conditions[name] + 1 : conditions[name] - 1,
     }));
   };
+  
+  const handleSearchBarSubmit =()=>{
+    navigate("/hotelsList", {state:{destination,dates,conditions}})
+  }
 
   return (
     <div className="header">
@@ -155,7 +161,7 @@ const Header = () => {
               </div>
             )}
           </div>
-          <button className="SearchBarBtn">搜尋</button>
+          <button className="SearchBarBtn" onClick={handleSearchBarSubmit}>搜尋</button>
         </div>
       </div>
     </div>
