@@ -10,8 +10,7 @@ router.post("/:hotelid",createRoom);
 router.put("/:id",updatedRoom)
 //刪除room
 router.delete("/:hotelid/:id",deleteRoom)
-//讀取單筆room 資料 不用hotelid
-//是因為會多此一舉roomid來抓
+//讀取單筆room 資料直接用id 不用hotelid
 router.get("/:id",getRoom)
 //抓取rooms所有資料
 router.get("/",getAllRooms)
