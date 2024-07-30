@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import express  from "express"; 
-import dotenv from "dotenv"
-import hotelsApiRoute from "./ApiRoutes/hotels.js"
-import roomsApiRoute from "./ApiRoutes/rooms.js"
-import usersApiRoute from "./ApiRoutes/users.js"
-import authApiRoute from "./ApiRoutes/auth.js"
+import dotenv from "dotenv";
+import hotelsApiRoute from "./ApiRoutes/hotels.js";
+import roomsApiRoute from "./ApiRoutes/rooms.js";
+import usersApiRoute from "./ApiRoutes/users.js";
+import authApiRoute from "./ApiRoutes/auth.js";
+import cookieParser from "cookie-parser";
 
 const app = express()
 dotenv.config()
@@ -32,6 +33,7 @@ app.listen(port,()=>{
     //並要像npm start 一樣啟動它，
 })
 
+app.use(cookieParser())
 app.use(express.json())//讓上傳的req.body可以視為json
 
 ///middlewares中間代理商概念
@@ -41,7 +43,7 @@ app.use("/api/v1/users",usersApiRoute)
 app.use("/api/v1/auth",authApiRoute)
 
 //如果上述ApiRoute傳接有問題可以來這邊回傳錯誤訊息
-app.use((error,res,req,next)=>{
+app.use((error,req,res, next )=>{
     const errorStatus =error.status || 500 ;
     const errorMessage =error.message || "中間ApiRoute出錯";
     return res.status(errorStatus).json({ //return回去讓他可以被next(error) catch
