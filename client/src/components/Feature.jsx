@@ -6,7 +6,7 @@ import { CategoriesCities, CategoriesType, PopularHotelsData} from '../data'
 import useFetch from '../hooks/useFetch'
 import "./feature.scss"
 const Feature = () => {
-    const {data,loading,error} =useFetch("/hotels")
+    const {data,loading,error} =useFetch("/hotels?popularHotel=true")
     
     const typeUrl=`/hotels/amountoftype?type=${CategoriesType.map((type)=>type.name)}`
     const citiesUrl=`/hotels/amountofcities?cities=${CategoriesCities.map((city)=>city.name)}`
@@ -33,7 +33,7 @@ const Feature = () => {
                     <h2>人氣民宿、公寓類型住宿</h2>
                 </div>
                 <div className="listItems">
-                <PopularHotels dataArray={data}/>
+                <PopularHotels dataArray={data} loading={loading}/>
                 </div>
             </div>
         </div>

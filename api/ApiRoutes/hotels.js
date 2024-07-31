@@ -1,5 +1,5 @@
 import express from "express"
-import { createHotel, deleteHotel, getAllHotels, getHotel, updatedHotel } from "../RoutesController/hotels.js"
+import { createHotel, deleteHotel, getAllHotels, getHotel, updatedHotel, amountOfCities, amountOfType } from "../RoutesController/hotels.js"
 import { verifyAdmin } from "../JWT_Token.js"
 
 //這邊前面的url是/api/v1/hotels
@@ -14,5 +14,10 @@ router.put("/:id",updatedHotel)
 router.delete("/:id",verifyAdmin,deleteHotel)
 //抓取所有住宿資料
 router.get("/",getAllHotels)
+
+//要來做"依住宿類型瀏覽"的種類資料統計與分析
+router.get("/amountoftype", amountOfType)
+//要來做"依住宿城市瀏覽"的種類資料統計與分析
+router.get("/amountofcities", amountOfCities)
 
 export default router
