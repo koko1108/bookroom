@@ -46,8 +46,10 @@ app.use("/api/v1/auth",authApiRoute)
 app.use((error,req,res, next )=>{
     const errorStatus =error.status || 500 ;
     const errorMessage =error.message || "中間ApiRoute出錯";
+    const errorDetail = error.detail
     return res.status(errorStatus).json({ //return回去讓他可以被next(error) catch
         status:errorStatus,
-        Message:errorMessage,
+        message:errorMessage,
+        detail:errorDetail
     })
 })

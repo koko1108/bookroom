@@ -49,12 +49,13 @@ export const deleteHotel = async (req, res, next) => {
   }
 };
 export const getAllHotels = async (req, res, next) => {
-  const withQuery=req.query;
-  // req.query 包含了來自 URL 查詢參數的鍵值對。例如，如果請求 URL 是 /hotels?type=hotel&city=Taipei，那麼 req.query 將是 { type: 'hotel', city: 'Taipei' }
+  const {lowestPrice,highestPrice,...withQuery} = req.query;
   try{
       const hotelsList = await Hotel.find(
           {
-            ...withQuery //...代表說只要找到有相關欄位且符合的
+            ...withQuery,
+            cheapestPrice:{$gt:lowestPrice || 0,
+            $lt:highestPrice || 9999} //這邊一定要這樣打因為涉及到兩個fetch 如果沒有填｜｜會出現沒有值的問題
           }
       ).limit(7) //讓他回傳資料最多就七個
       res.status(200).json(hotelsList)

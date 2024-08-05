@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   faBed,
   faCalendar,
@@ -11,13 +11,16 @@ import { DateRange } from "react-date-range";
 import { zhTW } from "date-fns/locale"; // 直接從 date-fns 引入
 import format from "date-fns/format"; // 日期格式
 import { useNavigate } from 'react-router-dom';
+import { new_Options } from '../constants/actionTypes';
+import { OptionsContext } from '../context/OptionsContext';
 import "./header.scss";
 
 const Header = () => {
   const navigate=useNavigate();
+  const { city,date,options,dispatch } = useContext(OptionsContext);
   const [openConditions, setOpenConditions] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
-  const [destination, setDestination] = useState("");
+  const [destination, setDestination] = useState(city);
   const [dates, setDates] = useState([
     {
       startDate: new Date(),
@@ -25,11 +28,7 @@ const Header = () => {
       key: "selection",
     },
   ]);
-  const [conditions, setConditions] = useState({
-    adult: 1, // 初始人數,房間數為一
-    children: 0, // 可以不一定要有小孩
-    room: 1,
-  });
+  const [conditions, setConditions] = useState(options);
 
   const handleCounter = (name, sign) => {
     //name 是要修改的條件名稱，比如 "adult"、"children" 或 "room"。
@@ -42,130 +41,97 @@ const Header = () => {
   };
   
   const handleSearchBarSubmit =()=>{
+    dispatch({type:new_Options,payload:{city:destination,date:dates,options:conditions}})
     navigate("/hotelsList", {state:{destination,dates,conditions}})
   }
 
   return (
-    <div className="header">
+    <div className='header'>
       <div className="headerContainer">
-        <h1 className="headerTitle">尋找下趟住宿</h1>
-        <p className="headerDes">搜尋飯店、民宿及其他住宿類型的優惠…</p>
+        <h1 className="headerTitle">
+          尋找下趟住宿
+        </h1>
+        <p className="headerDes">搜尋飯店、民宿及其他住宿類型的優惠…
+          <br />Booking.com clone挑戰（為SamKo Demo使用不為盈利）</p>
         <div className="headerSearchBar">
           <div className="SearchBarItem">
             <FontAwesomeIcon icon={faBed} />
-            <input
-              type="text"
-              placeholder="你要去哪裡？"
-              className="SearchInput"
-              onChange={(e)=>setDestination(e.target.value)}
-            />
+            <input type="text" placeholder='你要去哪裡？' className='SearchInput' onChange={(e)=>setDestination(e.target.value)}/>
           </div>
           <div className="SearchBarItem">
-            <FontAwesomeIcon
-              icon={faCalendar}
-              onClick={() => setOpenCalendar(!openCalendar)}
-            />
-            <span
-              className="SearchText"
-              onClick={() => setOpenCalendar(!openCalendar)}
-            >
-              {format(dates[0].startDate, "MM/dd/yyyy")} -{" "}
-              {format(dates[0].endDate, "MM/dd/yyyy")}
+            <FontAwesomeIcon icon={faCalendar} onClick={() => setOpenCalendar(!openCalendar)} />
+            <span className="SearchText" onClick={() => setOpenCalendar(!openCalendar)} >
+              {format(dates[0].startDate, "MM/dd/yyyy")} - {format(dates[0].endDate, "MM/dd/yyyy")}
             </span>
-            {openCalendar && (
-              <DateRange
-                editableDateInputs={true} // 允許用戶直接編輯日期輸入框
-                onChange={(item) => setDates([item.selection])} // 當用戶選擇新日期範圍時，更新日期狀態
-                moveRangeOnFirstSelection={false} // 如果只選擇一個日期，不自動選擇一個範圍
-                className="calendar" // 添加自定義的 CSS 類名，以便樣式定義
-                ranges={dates} // 設定選擇的日期範圍，使用 dates 狀態變數
-                minDate={new Date()} // 設定可選擇的最小日期，這裡設定為當前日期
-                locale={zhTW} // 設定本地化為繁體中文
-              />
-            )}
+            {openCalendar && <DateRange
+              editableDateInputs={true}
+              onChange={item => setDates([item.selection])}
+              moveRangeOnFirstSelection={false}
+              className="calendar"
+              ranges={dates}
+              minDate={new Date()}
+              locale={zhTW}
+            />}
           </div>
           <div className="SearchBarItem">
-            <FontAwesomeIcon
-              icon={faPeopleGroup}
-              onClick={() => setOpenConditions(!openConditions)}
-            />
-            <span
-              className="SearchText"
-              onClick={() => setOpenConditions(!openConditions)}
-            >
-              {conditions.adult}位成人 · {conditions.children} 位小孩 ·{" "}
-              {conditions.room} 間房
-            </span>
-            {openConditions && (
+            <FontAwesomeIcon icon={faPeopleGroup} onClick={() => setOpenConditions(!openConditions)} />
+            <span className="SearchText" onClick={() => setOpenConditions(!openConditions)}  >{conditions.adult}位成人 · {conditions.children} 位小孩 · {conditions.room} 間房</span>
+            {openConditions &&
               <div className="ConditionsContainer">
                 <div className="condition">
                   成人
                   <div className="conditionCounter">
-                    <button
-                      className="conditionCounterButton"
-                      disabled={conditions.adult <= 1}
-                      onClick={() => handleCounter("adult", "decrease")}
-                    >
+                    <button className="conditionCounterButton" disabled={conditions.adult <=1 } 
+                      onClick={() => handleCounter("adult","decrease")} >
                       -
                     </button>
                     <span className="number">{conditions.adult}</span>
-                    <button
-                      className="conditionCounterButton"
-                      onClick={() => handleCounter("adult", "increase")}
-                    >
+                    <button className="conditionCounterButton" onClick={() => handleCounter("adult","increase")}>
                       +
                     </button>
                   </div>
                 </div>
                 <div className="condition">
-                  <span>
-                    小孩
+                  <span>小孩
                     <p>0-17 歲</p>
                   </span>
+
                   <div className="conditionCounter">
-                    <button
-                      className="conditionCounterButton"
-                      disabled={conditions.children <= 0}
-                      onClick={() => handleCounter("children", "decrease")}
-                    >
+                    <button className="conditionCounterButton" disabled={conditions.children <=0 }
+                      onClick={() => handleCounter("children","decrease")} >
                       -
                     </button>
                     <span className="number">{conditions.children}</span>
-                    <button
-                      className="conditionCounterButton"
-                      onClick={() => handleCounter("children", "increase")}
-                    >
+                    <button className="conditionCounterButton" onClick={() => handleCounter("children","increase")}>
                       +
                     </button>
                   </div>
                 </div>
+
                 <div className="condition">
                   房間
                   <div className="conditionCounter">
-                    <button
-                      className="conditionCounterButton"
-                      disabled={conditions.room <= 1}
-                      onClick={() => handleCounter("room", "decrease")}
-                    >
+                    <button className="conditionCounterButton" disabled={conditions.room <=1 }
+                      onClick={() => handleCounter("room","decrease")}>
                       -
                     </button>
-                    <span className="number">{conditions.room}</span>
-                    <button
-                      className="conditionCounterButton"
-                      onClick={() => handleCounter("room", "increase")}
-                    >
+                    <span className="number"> {conditions.room}</span>
+                    <button className="conditionCounterButton" onClick={() => handleCounter("room","increase")}>
                       +
                     </button>
                   </div>
                 </div>
               </div>
-            )}
+            }
+
+
           </div>
-          <button className="SearchBarBtn" onClick={handleSearchBarSubmit}>搜尋</button>
+          <button className='SearchBarBtn' onClick={handleSearchBarSubmit}>搜尋</button>
         </div>
       </div>
-    </div>
-  );
-};
 
-export default Header;
+    </div>
+  )
+}
+
+export default Header
