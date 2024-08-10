@@ -38,6 +38,27 @@ export const updatedRoom = async (req, res, next) => {
     );
   }
 };
+
+export const updatedRoomDates = async (req, res, next) => {
+  const roomNumberId = req.params.id;
+  const dates = req.body.dates;
+  try {
+    const updatedRoomDates = await Room.updateOne(
+      { "roomNumbers._id": roomNumberId },
+      {
+        $push: {
+          "roomNumbers.$.unavailableDates": dates,
+        },
+      }
+    );
+    res.status(200).json(updatedRoomDates);
+  } catch (error) {
+    next(
+      errorMessage(500, "預訂日期更新失敗，可能為格式錯誤或是找不到其ID", error)
+    );
+  }
+};
+
 export const deleteRoom = async (req, res, next) => {
   const hotelId = req.params.hotelid;
   const roomId = req.params.id;
@@ -53,6 +74,7 @@ export const deleteRoom = async (req, res, next) => {
     next(errorMessage(500, "刪除失敗，找不到其ID", error));
   }
 };
+
 export const getRoom = async (req, res, next) => {
   try {
     const getRoom = await Room.findById(req.params.id);
@@ -61,6 +83,7 @@ export const getRoom = async (req, res, next) => {
     next(errorMessage(500, "搜尋失敗，找不到其ID", error));
   }
 };
+
 export const getAllRooms = async (req, res, next) => {
   try {
     const getRooms = await Room.find();
@@ -69,6 +92,7 @@ export const getAllRooms = async (req, res, next) => {
     next(errorMessage(500, "搜尋失敗，為資料庫變動問題", error));
   }
 };
+
 export const getHotelRooms = async (req, res, next) => {
   const gethotel = req.params.hotelid;
   try {
