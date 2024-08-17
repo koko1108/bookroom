@@ -10,13 +10,9 @@ const Announcement = ({ type }) => {
                     ?
                     // true
                     <>
-                        <div className="checktext">
-                            <input type="checkbox" name="checkbox" id="checkbox" />
-                            此為差旅行程
-                        </div>
                         <div className="infoDes">
                             <FontAwesomeIcon icon={faInfoCircle} />
-                            獲得所需建議。在出發之前，查看最新的新冠肺炎（COVID-19）相關限制。了解更多 鐵人挑戰GO
+                            獲得所需建議。在出發之前，查看最新的新冠肺炎（COVID-19）相關限制。
                         </div>
                         <div className="discountInfo">
                             <div className="left">

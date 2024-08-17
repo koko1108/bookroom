@@ -10,6 +10,7 @@ import "react-date-range/dist/theme/default.css"; // theme css file
 import { DateRange } from "react-date-range";
 import { zhTW } from "date-fns/locale"; // 直接從 date-fns 引入
 import format from "date-fns/format"; // 日期格式
+import addDays from "date-fns/addDays"; 
 import { useNavigate } from 'react-router-dom';
 import { new_Options } from '../constants/actionTypes';
 import { OptionsContext } from '../context/OptionsContext';
@@ -24,7 +25,7 @@ const Header = () => {
   const [dates, setDates] = useState([
     {
       startDate: new Date(),
-      endDate: new Date(), //new Date() 是 JavaScript 中的 Date 物件構造函數，用於創建一個新的日期物件。
+      endDate: addDays(new Date(), 1), // 預設今天和明天
       key: "selection",
     },
   ]);
@@ -52,7 +53,7 @@ const Header = () => {
           尋找下趟住宿
         </h1>
         <p className="headerDes">搜尋飯店、民宿及其他住宿類型的優惠…
-          <br />Booking.com clone挑戰（為SamKo Demo使用不為盈利）</p>
+          <br />（為Demo使用不為盈利）</p>
         <div className="headerSearchBar">
           <div className="SearchBarItem">
             <FontAwesomeIcon icon={faBed} />
